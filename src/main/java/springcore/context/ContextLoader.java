@@ -5,6 +5,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import springcore.entity.ContextApplication;
+import springcore.exception.SpringFrameworkLoadListenerException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,6 +32,8 @@ public abstract class ContextLoader {
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SpringFrameworkLoadListenerException e) {
             e.printStackTrace();
         }
     }
@@ -59,7 +62,7 @@ public abstract class ContextLoader {
     /**
      * 解析xml文件
      * */
-    public void buildPath() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public void buildPath() throws ClassNotFoundException, IllegalAccessException, InstantiationException, SpringFrameworkLoadListenerException {
         //获取根目录
         Element rootElement = document.getRootElement();
         //获得bean的集合
@@ -76,6 +79,19 @@ public abstract class ContextLoader {
             //将class对象保存至 ContextApplication
             ContextApplication contextApplication = new ContextApplication();
             contextApplication.setObj(clazzObject);
+
+            //判断是否有子集，属性注入
+            List<Element> opts = bean.elements("opt");
+            for(Element opt : opts) {
+                String optName = opt.attributeValue("name");
+                String refClass = opt.attributeValue("ref");
+                ContextApplication contextApplication1 = objCacheMap.get(refClass);
+                if(contextApplication1 == null){
+                    throw new SpringFrameworkLoadListenerException(refClass + "未找到");
+                }else {
+
+                }
+            }
             //将 name -> class 保存到 map容器
             objCacheMap.put(beanName,contextApplication);
         }
