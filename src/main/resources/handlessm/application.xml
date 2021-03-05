@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans>
+    <bean name="userController" class="javases.handleSSM.APP.controller.UserController">
+        <opt name="userService" ref="userService"></opt>
+    </bean>
+    <bean name="userService" class="javases.handleSSM.APP.service.impl.UserviceImpl">
+        <opt name="userDao" ref="userDao"></opt>
+    </bean>
+    <bean name="userDao" class="javases.handleSSM.APP.dao.UserDao"></bean>
+</beans>
